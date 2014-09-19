@@ -1,0 +1,38 @@
+{
+	"variables" : {
+		"iso_url" : "https://mirrors.kernel.org/archlinux/iso/2014.09.03/archlinux-2014.09.03-dual.iso",
+		"iso_sum" : "4f56b92557aef864686c2fd505b7336a11464bdd",
+		"iso_sum_type" : "sha1"
+	},
+	"builders" : [
+		{
+			"type" : "virtualbox-iso",
+			"guest_os_type" : "ArchLinux",
+			"iso_url" : "{{user `iso_url`}}",
+			"iso_checksum" : "{{user `iso_sum`}}",
+			"iso_checksum_type" : "{{user `iso_sum_type`}}",
+			"guest_additions_mode" : "disable",
+			"disk_size" : 40960,
+			"boot_wait" : "10s",
+			"boot_command" : "<enter><wait10><wait10><wait5>systemctl start sshd<enter><wait5>passwd<enter>root<enter>root<enter>",
+			"ssh_username" : "root",
+			"ssh_password" : "root",
+			"ssh_wait_timeout" : "120s",
+			"shutdown_command" : "systemctl poweroff"
+		}
+	],
+	"provisioners" : [
+		{
+			"type" : "shell",
+			"scripts" : [
+				"scripts/install.sh"
+			]
+		}
+	],
+	"post-processors" : [
+		{
+			"type" : "vagrant",
+			"output" : "archlinux-i686-{{.Provider}}.box"
+		}
+	]
+}
